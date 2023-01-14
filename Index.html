@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <title>Unclean VTT</title>
+  <?!= include("Style"); ?>
+</head>
+
+<body>
+  <dialog id="character-sheet">
+    <div>
+      <div class="attributes">
+        <span><span>Strength</span><unclean-dots/></span>
+        <span><span>Dexterity</span><unclean-dots/></span>
+        <span><span>Stamina</span><unclean-dots/></span>
+
+        <span><span>Intelligence</span><unclean-dots/></span>
+        <span><span>Wits</span><unclean-dots/></span>
+        <span><span>Resolve</span><unclean-dots/></span>
+
+        <span><span>Presence</span><unclean-dots/></span>
+        <span><span>Manipulation</span><unclean-dots/></span>
+        <span><span>Composure</span><unclean-dots/></span>
+      </div>
+  </dialog>
+  <template id="new-token">
+    <div>
+      <?!= include("TokenStyle"); ?>
+      <input class="nametag" draggable="true" is="unclean-nametag">
+      <button type="button" onclick="document.querySelector('#character-sheet').showModal()">Sheet</button>
+    </div>
+  </template>
+  <template id="unclean-dots-svg">
+    <svg viewBox="0 -5 54 10" width=50 height=10>
+      <style>
+        circle {
+          fill-opacity: 0;
+          fill: black;
+          stroke: black;
+          stroke-width: 1;
+        }
+        .filled {
+          fill-opacity: 1;
+        }
+      </style>
+      <g>
+        <circle r="4.5" cx="5" class="filled"/>
+        <circle r="4.5" cx="16"/>
+        <circle r="4.5" cx="27"/>
+        <circle r="4.5" cx="38"/>
+        <circle r="4.5" cx="49"/>
+      </g>
+    </svg>
+  </template>
+  <div style="width: 100%; display: flex; justify-content: center;">
+    <div id="tabletop">
+      <div draggable="true" class="prototype" is="unclean-token">
+        <p>New Token</p>
+      </div>
+    </div>
+  </div>
+  <?!= include("HandlersJS"); ?>
+  <?!= include("ComponentsJS"); ?>
+  <?!= include("MainJS"); ?>
+</body>
+
+</html>
