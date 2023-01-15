@@ -1,0 +1,11 @@
+document.querySelectorAll('.prototype')
+    .forEach((element) => {
+        element.addEventListener('dragstart', pickup);
+    });
+
+const tabletop = document.getElementById('tabletop');
+tabletop.addEventListener('dragenter', onDragEnter);
+tabletop.addEventListener('dragover', onDragEnter);
+
+tabletop.addEventListener('drop', onDrop, {capture: true});
+loadTokens();

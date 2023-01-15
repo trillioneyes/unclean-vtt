@@ -4,7 +4,7 @@
 <head>
   <base target="_top">
   <title>Unclean VTT</title>
-  <?!= include("Style"); ?>
+  <link rel="stylesheet" href="./Main.css">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
   </dialog>
   <template id="new-token">
     <div>
-      <?!= include("TokenStyle"); ?>
+      <link rel="stylesheet" href="Token.css">
       <input class="nametag" draggable="true" is="unclean-nametag">
       <button type="button" onclick="document.querySelector('#character-sheet').showModal()">Sheet</button>
     </div>
@@ -60,9 +60,9 @@
       </div>
     </div>
   </div>
-  <?!= include("HandlersJS"); ?>
-  <?!= include("ComponentsJS"); ?>
-  <?!= include("MainJS"); ?>
+  <script src="./Handlers.js"></script>
+  <script src="./Components.js"></script>
+  <script src="./Main.js"></script>
 </body>
 
 </html>
