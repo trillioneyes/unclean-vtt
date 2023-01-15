@@ -20,6 +20,7 @@ class UncleanToken extends HTMLDivElement {
         .addEventListener('click', (ev) => {
           this.characterSheet.showModal();
         });
+    this.addEventListener('unclean-changed', this.persist);
   }
 
   getName() {
@@ -36,6 +37,10 @@ class UncleanToken extends HTMLDivElement {
 
   get characterSheet() {
     return this.shadowRoot.querySelector('dialog');
+  }
+
+  persist(ev) {
+    persistToken(this);
   }
 }
 
@@ -77,6 +82,11 @@ class UncleanDots extends HTMLElement {
         circle = circle.previousElementSibling;
       }
     }
+    const event = new CustomEvent('unclean-changed', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(event);
   }
 
   get svgDots() {
