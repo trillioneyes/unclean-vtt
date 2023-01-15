@@ -1,13 +1,14 @@
 class UncleanToken extends HTMLDivElement {
   constructor() {
     super();
-    console.log('UncleanToken constructor');
-    console.log(this);
     this.draggable = true;
     this.setAttribute('is', 'unclean-token');
     this.attachShadow({mode: 'open'});
     this.shadowRoot.appendChild(
       document.getElementById('new-token').content.querySelector('div').cloneNode(true)
+    );
+    this.shadowRoot.appendChild(
+      document.getElementById('character-sheet').content.querySelector('dialog').cloneNode(true)
     );
   }
 
@@ -15,6 +16,10 @@ class UncleanToken extends HTMLDivElement {
     this.addEventListener('dragstart', pickup);
     this.addEventListener('dragenter', noDragEnter);
     this.addEventListener('dragover', noDragEnter);
+    this.shadowRoot.querySelector('button')
+        .addEventListener('click', (ev) => {
+          this.characterSheet.showModal();
+        });
   }
 
   getName() {
@@ -27,6 +32,10 @@ class UncleanToken extends HTMLDivElement {
 
   focus() {
     this.shadowRoot.querySelector('input').focus();
+  }
+
+  get characterSheet() {
+    return this.shadowRoot.querySelector('dialog');
   }
 }
 
@@ -50,7 +59,7 @@ class UncleanDots extends HTMLElement {
       this.shadowRoot.appendChild(template.children[i]);
     }
     this.shadowRoot.querySelectorAll('circle').forEach((circle) => {
-      circle.addEventListener('click', UncleanDots.handleDotClick)
+      circle.addEventListener('click', UncleanDots.handleDotClick);
     });
   }
 
@@ -85,7 +94,7 @@ class UncleanDots extends HTMLElement {
         dot.classList.add('filled');
         value--;
       } else {
-        dots.classList.remove('filled');
+        dot.classList.remove('filled');
       }
     }
   }
