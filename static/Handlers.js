@@ -33,12 +33,9 @@ function onDrop(ev) {
     newPosition = {
         x: ev.offsetX - ev.dataTransfer.getData('application/unclean.drag.x'),
         y: ev.offsetY - ev.dataTransfer.getData('application/unclean.drag.y')
-    }
+    };
     if (!elementId) {
-        google.script.run
-            .withSuccessHandler(makeNewToken)
-            .withUserObject(newPosition)
-            .getNewId();
+        makeNewToken(crypto.randomUUID(), newPosition);
         return;
     }
     element = document.getElementById(elementId);
@@ -48,13 +45,13 @@ function onDrop(ev) {
 
 function removePx(style) {
     let l = style.length;
-    return style.substring(0, l - 2);
+    return parseInt(style.substring(0, l - 2));
 }
 
 function persistToken(element) {
-    let properties = {id: element.id, pX: removePx(element.style.left), pY: removePx(element.style.top)};
+    let properties = {id: element.id, x: removePx(element.style.left), y: removePx(element.style.top)};
     properties.name = element.shadowRoot.querySelector('input').value;
-    google.script.run.persistToken(0, properties);
+    tokenPost([properties]);
 }
 
 function tokenFromProperties(properties) {
@@ -73,7 +70,5 @@ function tokensFromProperties(properties) {
 }
 
 function loadTokens() {
-    google.script.run
-        .withSuccessHandler(tokensFromProperties)
-        .loadTokens(0);
+    tokensGet().then(tokensFromProperties);
 }
