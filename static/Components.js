@@ -1,4 +1,8 @@
 class UncleanToken extends HTMLDivElement {
+  static get observedAttributes() {
+    return ['data-modules'];
+  }
+
   constructor() {
     super();
     this.draggable = true;
@@ -10,7 +14,6 @@ class UncleanToken extends HTMLDivElement {
     this.shadowRoot.appendChild(
       document.getElementById('character-sheet').content.querySelector('dialog').cloneNode(true)
     );
-    this.modules = ['unclean-cofd-attributes'];
   }
 
   get modules() {
@@ -19,13 +22,16 @@ class UncleanToken extends HTMLDivElement {
 
   set modules(value) {
     this.setAttribute('data-modules', value);
+  }
+
+  attributeChangedCallback(name, oldValue, value) {
     const sheet = this.characterSheet.querySelectorAll('.unclean-module');
     for (const element of sheet) {
-      if (!value.includes(element.tagName.toLowerCase())) {
+      if (!this.modules.includes(element.tagName.toLowerCase())) {
         sheet.removeChild(element);
       }
     }
-    for (const module of value) {
+    for (const module of this.modules) {
       if (!this.characterSheet.querySelector(module)) {
         const element = document.createElement(module);
         element.className = 'unclean-module';

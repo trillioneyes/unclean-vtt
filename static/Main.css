@@ -1,4 +1,4 @@
-[is=unclean-token] {
+[is=unclean-token], .prototype {
     position: absolute;
     width: 100px;
     height: 100px;

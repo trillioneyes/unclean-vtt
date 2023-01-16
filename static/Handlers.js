@@ -1,5 +1,6 @@
 function pickup(ev) {
   ev.dataTransfer.setData('application/unclean.token', ev.target.id || '');
+  ev.dataTransfer.setData('application/unclean.modules', ev.target.getAttribute('data-modules'));
   ev.dataTransfer.setData('application/unclean.drag.x', ev.offsetX);
   ev.dataTransfer.setData('application/unclean.drag.y', ev.offsetY);
 }
@@ -19,26 +20,28 @@ function positionToken(element, newPosition) {
   element.style.left = newPosition.x + 'px';
   element.style.top = newPosition.y + 'px';
 }
-function makeNewToken(newId, ev) {
+function makeNewToken(newId) {
   element = document.createElement('div', {is: 'unclean-token'});
   element.id = newId;
   tabletop.appendChild(element);
-  positionToken(element, ev);
-  persistToken(element);
+  // positionToken(element, ev);
+  // persistToken(element);
   element.shadowRoot.querySelector('input').focus();
+  return element;
 }
 function onDrop(ev) {
-  console.log(ev);
-  elementId = ev.dataTransfer.getData('application/unclean.token');
-  newPosition = {
+  const elementId = ev.dataTransfer.getData('application/unclean.token');
+  const newPosition = {
     x: ev.offsetX - ev.dataTransfer.getData('application/unclean.drag.x'),
     y: ev.offsetY - ev.dataTransfer.getData('application/unclean.drag.y')
   };
+  let element;
   if (!elementId) {
-    makeNewToken(crypto.randomUUID(), newPosition);
-    return;
+    element = makeNewToken(crypto.randomUUID());
+  } else {
+    element = document.getElementById(elementId);
   }
-  element = document.getElementById(elementId);
+  element.setAttribute('data-modules', ev.dataTransfer.getData('application/unclean.modules'));
   positionToken(element, newPosition);
   persistToken(element);
 }
