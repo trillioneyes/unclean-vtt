@@ -2,8 +2,12 @@
     position: absolute;
     width: 100px;
     height: 100px;
-    background-color: black;
+    background-color: darkslategray;
     color: white;
+    border-color: darkcyan;
+    border-width: 3px;
+    border-style: ridge;
+    padding: 3px;
 }
 .prototype {
     top: 100%;
@@ -15,4 +19,8 @@
     background-color: green;
     width: 1280px;
     height: 800px;
+}
+
+body {
+    background-color: darkseagreen;
 }
