@@ -122,6 +122,47 @@ class UncleanDots extends HTMLElement {
   }
 }
 
+class CofDAttributes extends HTMLElement {
+  static order = ["Intelligence", "Strength", "Presence",
+                  "Wits", "Dexterity", "Manipulation",
+                  "Resolve",  "Stamina", "Composure"];
+  constructor() {
+    super();
+    this.attachShadow({mode: 'open'});
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = 'Token.css';
+    this.shadowRoot.appendChild(style);
+    const div = document.createElement('div');
+    div.className = 'cofd-attributes';
+    this.shadowRoot.append(div);
+    for (const attr of CofDAttributes.order) {
+      const element = document.createElement('span');
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = attr;
+      element.appendChild(nameSpan);
+      const dots = document.createElement('unclean-dots');
+      dots.setAttribute('name', attr);
+      element.appendChild(dots);
+      div.appendChild(element);
+    }
+  }
+
+  fromProperties(properties) {
+    for (const attr of CofDAttributes.order) {
+      this.shadowRoot.querySelector(`[name=${attr}]`)
+          .rating = properties.attributes[attr];
+    }
+  }
+  toProperties(properties) {
+    if (!properties.attributes) properties.attributes = {};
+    for (const dots of this.shadowRoot.querySelectorAll('unclean-dots')) {
+      properties.attributes[dots.getAttribute('name')] = dots.rating;
+    }
+  }
+}
+
 customElements.define('unclean-token', UncleanToken, {extends: 'div'});
 customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
+customElements.define('unclean-cofd-attributes', CofDAttributes);

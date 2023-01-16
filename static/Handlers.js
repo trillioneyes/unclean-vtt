@@ -51,31 +51,31 @@ function removePx(style) {
 function persistToken(element) {
   let properties = {id: element.id, x: removePx(element.style.left), y: removePx(element.style.top)};
   properties.name = element.shadowRoot.querySelector('input').value;
-  const attributeNames = ["Intelligence", "Strength", "Presence",
-                          "Wits", "Dexterity", "Manipulation",
-                          "Resolve",  "Stamina", "Composure"];
-  properties.attributes = {};
-  for (const [i, dot] of element.characterSheet.querySelectorAll('unclean-dots').entries()) {
-    properties.attributes[attributeNames[i]] = dot.rating;
+  for (const module of element.modules) {
+    element.characterSheet.querySelector(module)
+           .toProperties(properties);
   }
+  properties.modules = element.modules;
   tokenPost([properties]);
 }
 
 function tokenFromProperties(properties) {
+  const modules = properties.modules;
   let element = document.getElementById(properties.id);
   if (!element) {
     element = document.createElement('div', {is: 'unclean-token'});
     element.id = properties.id;
     tabletop.appendChild(element);
   }
+  element.modules = modules;
   positionToken(element, properties);
   element.shadowRoot.querySelector('input').value = properties.name;
-  const attributeNames = ["Intelligence", "Strength", "Presence",
-                          "Wits", "Dexterity", "Manipulation",
-                          "Resolve",  "Stamina", "Composure"];
-  // if (!properties.attributes) return;
-  for (const [i, dot] of element.characterSheet.querySelectorAll('unclean-dots').entries()) {
-    dot.rating = properties.attributes[attributeNames[i]];
+  for (const module of modules) {
+    if (!element.characterSheet.querySelector(module)) {
+      element.characterSheet.appendChild(document.createElement(module));
+    }
+    element.characterSheet.querySelector(module)
+           .fromProperties(properties);
   }
 }
 

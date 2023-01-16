@@ -7,13 +7,13 @@ div {
     align-items: center;
 }
 
-.attributes span {
+.cofd-attributes span {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 5px;
 }
-.attributes {
+.cofd-attributes {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 20px;
