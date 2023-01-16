@@ -12,3 +12,13 @@ async function tokensGet() {
     return fetch('./api/tokens')
         .then((response) => response.json());
 }
+
+async function tokensDelete(ids) {
+  return fetch('./api/tokens', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ids: ids})
+  });
+}

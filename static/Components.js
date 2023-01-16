@@ -10,15 +10,46 @@ class UncleanToken extends HTMLDivElement {
     this.shadowRoot.appendChild(
       document.getElementById('character-sheet').content.querySelector('dialog').cloneNode(true)
     );
+    this.modules = ['unclean-cofd-attributes'];
+  }
+
+  get modules() {
+    return this.getAttribute('data-modules').split(',');
+  }
+
+  set modules(value) {
+    this.setAttribute('data-modules', value);
+    const sheet = this.characterSheet.querySelectorAll('.unclean-module');
+    for (const element of sheet) {
+      if (!value.includes(element.tagName.toLowerCase())) {
+        sheet.removeChild(element);
+      }
+    }
+    for (const module of value) {
+      if (!this.characterSheet.querySelector(module)) {
+        const element = document.createElement(module);
+        element.className = 'unclean-module';
+        this.characterSheet.appendChild(element);
+      }
+    }
+  }
+
+  getModule(moduleName) {
+    return this.characterSheet.querySelector(moduleName);
   }
 
   connectedCallback() {
     this.addEventListener('dragstart', pickup);
     this.addEventListener('dragenter', noDragEnter);
     this.addEventListener('dragover', noDragEnter);
-    this.shadowRoot.querySelector('button')
+    this.shadowRoot.querySelector('.details-button')
         .addEventListener('click', (ev) => {
           this.characterSheet.showModal();
+        });
+    this.shadowRoot.querySelector('.delete-button')
+        .addEventListener('click', (ev) => {
+          tokensDelete(this.id);
+          this.parentElement.removeChild(this);
         });
     this.addEventListener('unclean-changed', this.persist);
   }

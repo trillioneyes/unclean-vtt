@@ -52,8 +52,7 @@ function persistToken(element) {
   let properties = {id: element.id, x: removePx(element.style.left), y: removePx(element.style.top)};
   properties.name = element.shadowRoot.querySelector('input').value;
   for (const module of element.modules) {
-    element.characterSheet.querySelector(module)
-           .toProperties(properties);
+    element.getModule(module).toProperties(properties);
   }
   properties.modules = element.modules;
   tokenPost([properties]);
@@ -71,11 +70,7 @@ function tokenFromProperties(properties) {
   positionToken(element, properties);
   element.shadowRoot.querySelector('input').value = properties.name;
   for (const module of modules) {
-    if (!element.characterSheet.querySelector(module)) {
-      element.characterSheet.appendChild(document.createElement(module));
-    }
-    element.characterSheet.querySelector(module)
-           .fromProperties(properties);
+    element.getModule(module).fromProperties(properties);
   }
 }
 

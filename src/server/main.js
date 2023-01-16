@@ -27,7 +27,13 @@ async function handleTokensPost(req, resp) {
 }
 
 async function handleTokensDelete(req, resp) {
-
+  writeTokens(
+    await loadTokens()
+      .then((tokens) => tokens.filter((token) => {
+        return !req.body.ids.includes(token.id);
+      }))
+  );
+  resp.send();
 }
 
 function loadTokens() {
@@ -54,6 +60,8 @@ app.use(express.json());
 app.get('/api/tokens', handleTokensGet);
 
 app.post('/api/tokens', handleTokensPost);
+
+app.delete('/api/tokens', handleTokensDelete);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
