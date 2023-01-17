@@ -9,10 +9,16 @@
     border-style: ridge;
     padding: 3px;
 }
-.prototype {
+.token-prototypes {
     top: 100%;
     left: 0px;
     position: sticky;
+    width: 400px;
+    height: 112px;
+    display: flex;
+}
+.prototype {
+    position: static;
 }
 #tabletop {
     position: fixed;
