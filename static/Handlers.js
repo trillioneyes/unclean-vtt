@@ -43,22 +43,11 @@ function onDrop(ev) {
   }
   element.setAttribute('data-modules', ev.dataTransfer.getData('application/unclean.modules'));
   positionToken(element, newPosition);
-  persistToken(element);
 }
 
 function removePx(style) {
   let l = style.length;
   return parseInt(style.substring(0, l - 2));
-}
-
-function persistToken(element) {
-  let properties = {id: element.id, x: removePx(element.style.left), y: removePx(element.style.top)};
-  properties.name = element.shadowRoot.querySelector('input').value;
-  for (const module of element.modules) {
-    element.getModule(module).toProperties(properties);
-  }
-  properties.modules = element.modules;
-  tokenPost([properties]);
 }
 
 function tokenToProperties(element) {

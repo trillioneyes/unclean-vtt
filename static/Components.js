@@ -58,7 +58,7 @@ class UncleanToken extends HTMLDivElement {
           tokensDelete(this.id);
           this.parentElement.removeChild(this);
         });
-    this.addEventListener('changed', this.persist);
+    this.addEventListener('changed', (ev) => this.setAttribute('data-dirty', true));
   }
 
   getName() {
@@ -75,10 +75,6 @@ class UncleanToken extends HTMLDivElement {
 
   get characterSheet() {
     return this.shadowRoot.querySelector('dialog');
-  }
-
-  persist(ev) {
-    persistToken(this);
   }
 }
 

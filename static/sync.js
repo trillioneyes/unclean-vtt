@@ -25,7 +25,7 @@ async function tokensDelete(ids) {
 
 async function syncDirtyTokens() {
   const dirtyTokens = Array.from(
-    document.querySelectorAll('[is=unclean-token][data-dirty=true]')
+    document.querySelectorAll('[is=unclean-token][data-dirty=true][id]')
   );
   for (const token of dirtyTokens) {
     token.setAttribute('data-dirty', false);
