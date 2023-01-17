@@ -9,7 +9,8 @@
     height: 100%;
 }
 
-.cofd-attributes span {
+.cofd-attributes span,
+.cofd-skills span {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,6 +20,35 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 20px;
+}
+
+.cofd-skills {
+    display: flex;
+    width: 11em;
+    flex-direction: column;
+    font-size: smaller;
+}
+.cofd-skills span {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.category {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.category.social::before {
+    content: "Social";
+}
+.category.mental::before {
+    content: "Mental";
+}
+.category.physical::before {
+    content: "Physical";
+}
+.category::before {
+    font-size: revert;
 }
 
 .delete-button {

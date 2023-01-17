@@ -25,6 +25,7 @@ class UncleanToken extends HTMLDivElement {
   }
 
   attributeChangedCallback(name, oldValue, value) {
+    console.log(this, value);
     const sheet = this.characterSheet.querySelectorAll('.unclean-module');
     for (const element of sheet) {
       if (!this.modules.includes(element.tagName.toLowerCase())) {
@@ -159,10 +160,7 @@ class UncleanDots extends HTMLElement {
   }
 }
 
-class CofDAttributes extends HTMLElement {
-  static order = ["Intelligence", "Strength", "Presence",
-                  "Wits", "Dexterity", "Manipulation",
-                  "Resolve",  "Stamina", "Composure"];
+class CofDDotsBlock extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -171,9 +169,9 @@ class CofDAttributes extends HTMLElement {
     style.href = 'Token.css';
     this.shadowRoot.appendChild(style);
     const div = document.createElement('div');
-    div.className = 'cofd-attributes';
+    div.className = this.constructor.containerClassName;
     this.shadowRoot.append(div);
-    for (const attr of CofDAttributes.order) {
+    for (const attr of this.constructor.order) {
       const element = document.createElement('span');
       const nameSpan = document.createElement('span');
       nameSpan.textContent = attr;
@@ -186,15 +184,52 @@ class CofDAttributes extends HTMLElement {
   }
 
   fromProperties(properties) {
-    for (const attr of CofDAttributes.order) {
-      this.shadowRoot.querySelector(`[name=${attr}]`)
-          .rating = properties.attributes[attr];
+    if (!properties[this.constructor.storageKey]) return;
+    for (const attr of this.constructor.order) {
+      this.shadowRoot.querySelector(`[name="${attr}"]`)
+          .rating = properties[this.constructor.storageKey][attr];
     }
   }
   toProperties(properties) {
-    if (!properties.attributes) properties.attributes = {};
+    if (!properties[this.constructor.storageKey])
+      properties[this.constructor.storageKey] = {};
     for (const dots of this.shadowRoot.querySelectorAll('unclean-dots')) {
-      properties.attributes[dots.getAttribute('name')] = dots.rating;
+      properties[this.constructor.storageKey][dots.getAttribute('name')] = dots.rating;
+    }
+  }
+}
+
+class CofDAttributes extends CofDDotsBlock {
+  static order = ["Intelligence", "Strength", "Presence",
+                  "Wits", "Dexterity", "Manipulation",
+                  "Resolve",  "Stamina", "Composure"];
+  static containerClassName = 'cofd-attributes';
+  static storageKey = 'attributes';
+}
+
+class CofDSkills extends CofDDotsBlock {
+  static order = ["Academics", "Computer", "Crafts", "Investigation",
+                  "Medicine", "Occult", "Politics", "Science",
+
+                  "Athletics", "Brawl", "Drive", "Firearms",
+                  "Larceny", "Stealth", "Survival",  "Weaponry",
+
+                  "Animal Ken", "Expression", "Empathy", "Intimidation",
+                  "Persuasion", "Socialize", "Streetwise", "Subterfuge"];
+  static containerClassName = "cofd-skills";
+  static storageKey = 'skills';
+
+  constructor() {
+    super();
+    const container = this.shadowRoot.querySelector('.cofd-skills');
+    const skills = Array.from(container.children);
+    for (const [ixStart, category] of ["mental", "physical", "social"].entries()) {
+      const div = document.createElement('div');
+      div.classList.add('category', category);
+      for (let ix = 0; ix < 8; ix++) {
+        div.appendChild(skills[8*ixStart + ix]);
+      }
+      container.appendChild(div);
     }
   }
 }
@@ -284,3 +319,4 @@ customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
 customElements.define('unclean-cofd-attributes', CofDAttributes);
 customElements.define('unclean-cofd-social', CofDSocial);
+customElements.define('unclean-cofd-skills', CofDSkills);
