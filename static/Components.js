@@ -231,8 +231,10 @@ class CofDSkills extends CofDDotsBlock {
     for (const [ixStart, category] of ["mental", "physical", "social"].entries()) {
       const div = document.createElement('div');
       div.classList.add('category', category);
-      for (let ix = 0; ix < 8; ix++) {
-        div.appendChild(skills[8*ixStart + ix]);
+      for (let offset = 0; offset < 8; offset++) {
+        const ix = 8*ixStart + offset;
+        skills[ix].querySelector('unclean-dots').rating = 0;
+        div.appendChild(skills[ix]);
       }
       container.appendChild(div);
     }
