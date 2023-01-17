@@ -57,7 +57,7 @@ class UncleanToken extends HTMLDivElement {
           tokensDelete(this.id);
           this.parentElement.removeChild(this);
         });
-    this.addEventListener('unclean-changed', this.persist);
+    this.addEventListener('changed', this.persist);
   }
 
   getName() {
@@ -119,7 +119,7 @@ class UncleanDots extends HTMLElement {
         circle = circle.previousElementSibling;
       }
     }
-    const event = new CustomEvent('unclean-changed', {
+    const event = new CustomEvent('changed', {
       bubbles: true,
       composed: true
     });
@@ -199,7 +199,88 @@ class CofDAttributes extends HTMLElement {
   }
 }
 
+class CofDSocial extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({mode: 'open'});
+    this.shadowRoot.appendChild(
+      document.getElementById('unclean-cofd-social').content.cloneNode(true)
+    );
+    this.shadowRoot
+        .addEventListener('change', (event) => {
+          this.addOrRemoveDoors();
+          this.bubbleChanged(event);
+        });
+  }
+
+  fromProperties(properties) {
+    if (properties.social) {
+      this.numDoors = properties.social.total;
+      this.openDoors = properties.social.open;
+    }
+  }
+
+  toProperties(properties) {
+    properties.social = {total: this.numDoors, open: this.openDoors};
+  }
+
+  addOrRemoveDoors() {
+    const doorsWanted = this.shadowRoot.querySelector('#cofd-num-doors').value;
+    let doorsSeen = 0;
+    let door = this.shadowRoot.querySelector('.cofd-door');
+    const doorsContainer = door.parentElement;
+    while (door) {
+      doorsSeen++;
+      const nextDoor = door.nextElementSibling;
+      if (doorsSeen > doorsWanted) {
+        doorsContainer.removeChild(door);
+      }
+      door = nextDoor;
+    }
+    const firstDoor = this.shadowRoot.querySelector('.cofd-door');
+    while (doorsSeen < doorsWanted) {
+      doorsContainer.appendChild(firstDoor.cloneNode(true));
+      doorsContainer.lastChild.checked = false;
+      doorsSeen++;
+    }
+  }
+
+  bubbleChanged(event) {
+    const newEvent = new CustomEvent('changed', {
+      bubbles: true,
+      composed: true
+    });
+    this.dispatchEvent(newEvent);
+  }
+
+  get numDoors() {
+    return this.shadowRoot.querySelector('#cofd-num-doors').value;
+  }
+  set numDoors(value) {
+    this.shadowRoot.querySelector('#cofd-num-doors').value = value;
+    this.addOrRemoveDoors();
+  }
+
+  get openDoors() {
+    let open = 0;
+    for (const door of this.shadowRoot.querySelectorAll('.cofd-door')) {
+      if (door.checked) open++;
+    }
+    return open;
+  }
+  set openDoors(count) {
+    for (const [i, door] of this.shadowRoot.querySelectorAll('.cofd-door').entries()) {
+      if (i < count) {
+        door.checked = true;
+      } else {
+        door.checked = false;
+      }
+    }
+  }
+}
+
 customElements.define('unclean-token', UncleanToken, {extends: 'div'});
 customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
 customElements.define('unclean-cofd-attributes', CofDAttributes);
+customElements.define('unclean-cofd-social', CofDSocial);

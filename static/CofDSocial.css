@@ -1,0 +1,24 @@
+input[type=number] {
+    width: 2em;
+    display: block;
+}
+
+.cofd-doors {
+    height: 3em;
+}
+
+.cofd-door {
+    appearance: none;
+    width: 3em;
+    height: 3em;
+}
+
+.cofd-door::before {
+    content: url("./closed-doors.svg");
+    /* right: -1px; */
+    /* top: -0.3em; */
+}
+
+.cofd-door:checked::before {
+    content: url("./open-gate.svg")
+}
