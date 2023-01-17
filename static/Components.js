@@ -25,7 +25,6 @@ class UncleanToken extends HTMLDivElement {
   }
 
   attributeChangedCallback(name, oldValue, value) {
-    console.log(this, value);
     const sheet = this.characterSheet.querySelectorAll('.unclean-module');
     for (const element of sheet) {
       if (!this.modules.includes(element.tagName.toLowerCase())) {
@@ -108,7 +107,12 @@ class UncleanDots extends HTMLElement {
 
   static handleDotClick(ev) {
     let circle = ev.currentTarget;
-    if (circle.classList.contains('filled')) {
+    // Special case: if we clicked the only filled dot, set rating to 0.
+    if (circle.classList.contains('filled')
+        && !circle.nextElementSibling.classList.contains('filled')
+        && !circle.previousElementSibling) {
+      circle.classList.remove('filled');
+    } else if (circle.classList.contains('filled')) {
       circle = circle.nextElementSibling;
       while (circle) {
         circle.classList.remove('filled');
