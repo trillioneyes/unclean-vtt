@@ -38,6 +38,7 @@ class UncleanToken extends HTMLDivElement {
         this.characterSheet.appendChild(element);
       }
     }
+    this.setAttribute('data-dirty', true);
   }
 
   getModule(moduleName) {

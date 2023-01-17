@@ -22,3 +22,15 @@ async function tokensDelete(ids) {
     body: JSON.stringify({ids: ids})
   });
 }
+
+async function syncDirtyTokens() {
+  const dirtyTokens = Array.from(
+    document.querySelectorAll('[is=unclean-token][data-dirty=true]')
+  );
+  for (const token of dirtyTokens) {
+    token.setAttribute('data-dirty', false);
+  }
+  if (dirtyTokens.length) {
+    tokenPost(dirtyTokens.map(tokenToProperties));
+  }
+}

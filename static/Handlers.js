@@ -61,6 +61,16 @@ function persistToken(element) {
   tokenPost([properties]);
 }
 
+function tokenToProperties(element) {
+  let properties = {id: element.id, x: removePx(element.style.left), y: removePx(element.style.top)};
+  properties.name = element.shadowRoot.querySelector('input').value;
+  for (const module of element.modules) {
+    element.getModule(module).toProperties(properties);
+  }
+  properties.modules = element.modules;
+  return properties;
+}
+
 function tokenFromProperties(properties) {
   const modules = properties.modules;
   let element = document.getElementById(properties.id);
@@ -75,6 +85,7 @@ function tokenFromProperties(properties) {
   for (const module of modules) {
     element.getModule(module).fromProperties(properties);
   }
+  element.setAttribute('data-dirty', false);
 }
 
 function tokensFromProperties(properties) {

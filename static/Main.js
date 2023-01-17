@@ -9,3 +9,5 @@ tabletop.addEventListener('dragover', onDragEnter);
 
 tabletop.addEventListener('drop', onDrop, {capture: true});
 loadTokens();
+
+let syncInterval = setInterval(syncDirtyTokens, 10*1000);
