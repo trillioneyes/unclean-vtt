@@ -1,3 +1,10 @@
+function attachShadowTemplate(element, templateId) {
+  if (!element.shadowRoot) element.attachShadow({mode: 'open'});
+  element.shadowRoot.appendChild(
+    document.getElementById(templateId).content.cloneNode(true)
+  );
+}
+
 class UncleanToken extends HTMLDivElement {
   static get observedAttributes() {
     return ['data-modules'];
@@ -7,13 +14,8 @@ class UncleanToken extends HTMLDivElement {
     super();
     this.draggable = true;
     this.setAttribute('is', 'unclean-token');
-    this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(
-      document.getElementById('new-token').content.querySelector('div').cloneNode(true)
-    );
-    this.shadowRoot.appendChild(
-      document.getElementById('character-sheet').content.querySelector('dialog').cloneNode(true)
-    );
+    attachShadowTemplate(this, 'new-token');
+    attachShadowTemplate(this, 'character-sheet');
   }
 
   get modules() {
@@ -92,11 +94,7 @@ class UncleanNametag extends HTMLInputElement {
 class UncleanDots extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({mode: 'open'});
-    let template = document.getElementById('unclean-dots-svg').content.cloneNode(true);
-    for (let i = 0; i < template.children.length; i++) {
-      this.shadowRoot.appendChild(template.children[i]);
-    }
+    attachShadowTemplate(this, 'unclean-dots-svg');
     this.shadowRoot.querySelectorAll('circle').forEach((circle) => {
       circle.addEventListener('click', UncleanDots.handleDotClick);
     });
@@ -237,13 +235,17 @@ class CofDSkills extends CofDDotsBlock {
   }
 }
 
+class ExtendableTable extends HTMLElement {
+  constructor() {
+    super();
+    attachShadowTemplate(this, 'unclean-cofd-merits');
+  }
+}
+
 class CofDSocial extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(
-      document.getElementById('unclean-cofd-social').content.cloneNode(true)
-    );
+    attachShadowTemplate(this, 'unclean-cofd-social');
     this.shadowRoot
         .addEventListener('change', (event) => {
           this.addOrRemoveDoors();
