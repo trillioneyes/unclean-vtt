@@ -3,6 +3,12 @@ input[type=number] {
     display: block;
 }
 
+.doors-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .cofd-doors {
     height: 3em;
 }
