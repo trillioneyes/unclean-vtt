@@ -322,10 +322,18 @@ class CofDSocial extends HTMLElement {
   }
 }
 
+function defineModule(tag, moduleClass) {
+  if (!window.uncleanModules) window.uncleanModules = {};
+  if (!moduleClass.prototype.toProperties
+      || !moduleClass.prototype.fromProperties)
+    return;
+  window.uncleanModules[tag] = moduleClass;
+  customElements.define(tag, moduleClass);
+}
 customElements.define('unclean-token', UncleanToken, {extends: 'div'});
 customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
-customElements.define('unclean-cofd-attributes', CofDAttributes);
-customElements.define('unclean-cofd-social', CofDSocial);
-customElements.define('unclean-cofd-skills', CofDSkills);
-customElements.define('unclean-cofd-merits', CofDMerits);
+defineModule('unclean-cofd-attributes', CofDAttributes);
+defineModule('unclean-cofd-social', CofDSocial);
+defineModule('unclean-cofd-skills', CofDSkills);
+defineModule('unclean-cofd-merits', CofDMerits);
