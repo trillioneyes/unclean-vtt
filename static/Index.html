@@ -10,6 +10,18 @@
     <body>
         <template id="character-sheet">
             <dialog>
+                <unclean-token-editor>
+                    <button class="open">Add/Remove Modules</button>
+                    <dialog>
+                        <form method="dialog">
+                            <textarea></textarea>
+                            <div>
+                                <button type="submit">OK</button>
+                                <button type="button" class="cancel">Cancel</button>
+                            </div>
+                        </form>
+                    </dialog>
+                </unclean-token-editor>
             </dialog>
         </template>
         <template id="new-token">

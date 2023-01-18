@@ -14,6 +14,9 @@ class UncleanToken extends HTMLDivElement {
     super();
     this.draggable = true;
     this.setAttribute('is', 'unclean-token');
+    this.addEventListener('unclean-set-modules', (ev) => {
+      this.setAttribute('data-modules', ev.detail);
+    });
     attachShadowTemplate(this, 'new-token');
     attachShadowTemplate(this, 'character-sheet');
   }
@@ -322,6 +325,41 @@ class CofDSocial extends HTMLElement {
   }
 }
 
+class TokenEditor extends HTMLElement {
+  constructor() {
+    super();
+    this.querySelector('button.open')
+        .addEventListener(
+          'click',
+          (ev) => this.open()
+        );
+    this.querySelector('dialog button.cancel')
+        .addEventListener(
+          'click',
+          (ev) => this.querySelector('dialog').close()
+        );
+    this.addEventListener('submit', (ev) => {
+      console.log(ev);
+      this.dispatchEvent(new CustomEvent('unclean-set-modules', {
+        composed: true,
+        detail: this.querySelector('textarea').value
+      }));
+    });
+  }
+
+  open() {
+    this.querySelector('textarea')
+        .value = this.modules.join(',');
+    this.querySelector('dialog').showModal();
+  }
+
+  get modules() {
+    const elements = this.parentElement.querySelectorAll('.unclean-module');
+    return Array.from(elements)
+                .map((element) => element.tagName.toLowerCase());
+  }
+}
+
 function defineModule(tag, moduleClass) {
   if (!window.uncleanModules) window.uncleanModules = {};
   if (!moduleClass.prototype.toProperties
@@ -333,6 +371,7 @@ function defineModule(tag, moduleClass) {
 customElements.define('unclean-token', UncleanToken, {extends: 'div'});
 customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
+customElements.define('unclean-token-editor', TokenEditor);
 defineModule('unclean-cofd-attributes', CofDAttributes);
 defineModule('unclean-cofd-social', CofDSocial);
 defineModule('unclean-cofd-skills', CofDSkills);
