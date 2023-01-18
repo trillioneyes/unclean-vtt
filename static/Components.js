@@ -207,6 +207,13 @@ class CofDAttributes extends CofDDotsBlock {
                   "Resolve",  "Stamina", "Composure"];
   static containerClassName = 'cofd-attributes';
   static storageKey = 'attributes';
+  constructor() {
+    super();
+    const dots = this.shadowRoot.querySelectorAll('unclean-dots');
+    for (const dot of dots) {
+      dot.rating = 1;
+    }
+  }
 }
 
 class CofDSkills extends CofDDotsBlock {
