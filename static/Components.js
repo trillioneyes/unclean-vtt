@@ -235,11 +235,14 @@ class CofDSkills extends CofDDotsBlock {
   }
 }
 
-class ExtendableTable extends HTMLElement {
+class CofDMerits extends HTMLElement {
   constructor() {
     super();
     attachShadowTemplate(this, 'unclean-cofd-merits');
   }
+
+  fromProperties(properties) {}
+  toProperties(properties) {}
 }
 
 class CofDSocial extends HTMLElement {
@@ -325,3 +328,4 @@ customElements.define('unclean-dots', UncleanDots);
 customElements.define('unclean-cofd-attributes', CofDAttributes);
 customElements.define('unclean-cofd-social', CofDSocial);
 customElements.define('unclean-cofd-skills', CofDSkills);
+customElements.define('unclean-cofd-merits', CofDMerits);
