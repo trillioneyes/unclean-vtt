@@ -33,7 +33,7 @@ class UncleanToken extends HTMLDivElement {
     const sheet = this.characterSheet.querySelectorAll('.unclean-module');
     for (const element of sheet) {
       if (!this.modules.includes(element.tagName.toLowerCase())) {
-        sheet.removeChild(element);
+        this.characterSheet.removeChild(element);
       }
     }
     for (const module of this.modules) {
@@ -249,10 +249,63 @@ class CofDMerits extends HTMLElement {
   constructor() {
     super();
     attachShadowTemplate(this, 'unclean-cofd-merits');
+    this.shadowRoot.querySelector('button')
+        .addEventListener('click', (ev) => {
+          this.addNew(ev);
+        });
   }
 
-  fromProperties(properties) {}
-  toProperties(properties) {}
+  fromProperties(properties) {
+    if (!properties.merits) return;
+    for (const [merit, rating] of properties.merits) {
+      const newRow = this.cloneNewRow();
+      const name = newRow.querySelector('[contenteditable=true]');
+      const dots = newRow.querySelector('unclean-dots');
+      this.shadowRoot.querySelector('tbody')
+          .appendChild(newRow);
+      name.textContent = merit;
+      dots.rating = rating;
+    }
+  }
+  toProperties(properties) {
+    const merits = [];
+    for (const td of
+         this.shadowRoot.querySelectorAll('[contenteditable=true]')) {
+      const merit = td.textContent;
+      const rating = td.nextElementSibling.querySelector('unclean-dots')
+                       .rating;
+      merits.push([merit, rating]);
+    }
+    properties.merits = merits;
+  }
+
+  addNew(event) {
+    const button = event.currentTarget;
+    const row = button.parentElement.parentElement;
+    const newRow = this.cloneNewRow();
+    row.after(newRow);
+    return newRow;
+  }
+
+  cloneNewRow() {
+    const fragment =
+          this.shadowRoot.getElementById('new-row').content.cloneNode(true);
+    fragment.querySelector('button').addEventListener('click', (ev) => {
+      this.addNew(ev);
+    });
+    fragment.querySelector('[contenteditable=true]')
+            .addEventListener('focusout', (ev) => {
+              if (ev.currentTarget.textContent == '') {
+                ev.currentTarget.parentElement.parentElement
+                  .removeChild(ev.currentTarget.parentElement);
+              }
+              this.dispatchEvent(new CustomEvent('changed', {
+                composed: true,
+                bubbles: true
+              }));
+            });
+    return fragment;
+  }
 }
 
 class CofDSocial extends HTMLElement {
@@ -346,7 +399,6 @@ class TokenEditor extends HTMLElement {
           (ev) => this.querySelector('dialog').close()
         );
     this.addEventListener('submit', (ev) => {
-      console.log(ev);
       this.dispatchEvent(new CustomEvent('unclean-set-modules', {
         composed: true,
         detail: this.querySelector('textarea').value

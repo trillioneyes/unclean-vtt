@@ -9,7 +9,7 @@
 
     <body>
         <template id="character-sheet">
-            <dialog>
+            <dialog class="character-sheet">
                 <unclean-token-editor>
                     <button class="open">Add/Remove Modules</button>
                     <dialog>
@@ -64,9 +64,23 @@
             </div>
         </template>
         <template id="unclean-cofd-merits">
+            <template id="new-row">
+                <tr class="data-row">
+                    <td contenteditable="true">Name</td>
+                    <td><unclean-dots/></td>
+                    <td> <button>+</button> </td>
+                </tr>
+            </template>
             <link rel="stylesheet" href="./Token.css">
             <div class="merits-container">
-                <table></table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th colspan="2"> Merits </th>
+                            <td><button>+</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </template>
 

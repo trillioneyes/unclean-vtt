@@ -60,3 +60,7 @@
     padding: 0;
     appearance: none;
 }
+
+.merits-container {
+    font-size: smaller;
+}
