@@ -1,38 +1,48 @@
 const express = require('express');
 const fs = require('fs/promises');
+const NodeCache = require('node-cache');
+
 const app = express();
 const port = 3000;
 
+async function loadCache() {
+  const stores = {
+    manual: {path: "./data/table1/manual.json",
+             cache: new NodeCache()},
+    auto: {path: "./data/table1/auto.json",
+           cache: new NodeCache()}
+  };
+  for (const {path, cache} of Object.values(stores)) {
+    const file = await fs.open(path);
+    for (const token of
+         Object.values(JSON.parse(await file.readFile()))) {
+      cache.set(token.id, token);
+    }
+    file.close();
+  }
+  return stores;
+}
+
 async function handleTokensGet(req, resp) {
-  resp.send(await loadTokens());
+  const cacheDump = global.stores.auto.cache.mget(
+    global.stores.auto.cache.keys()
+  );
+  resp.send(Object.values(cacheDump));
 }
 async function handleTokensPost(req, resp) {
   const tokens = req.body;
-  const tabletop = await loadTokens();
+  const {cache} = global.stores.auto;
   for (const token of tokens) {
-    let found = false;
-    for (const [i, existing] of tabletop.entries()) {
-      if (existing.id == token.id) {
-        tabletop[i] = token;
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      tabletop.push(token);
-    }
+    cache.set(token.id, token);
   }
-  writeTokens(tabletop);
-  resp.send();
+  writeTokens(global.stores.auto);
+  resp.send(cache.mget(tokens.map((token) => token.id)));
 }
 
 async function handleTokensDelete(req, resp) {
-  writeTokens(
-    await loadTokens()
-      .then((tokens) => tokens.filter((token) => {
-        return !req.body.ids.includes(token.id);
-      }))
-  );
+  const {cache} = global.stores.auto;
+  cache.del(req.body.ids);
+  writeTokens(global.stores.auto);
   resp.send();
 }
 
@@ -46,8 +56,10 @@ function loadTokens() {
            .then(JSON.parse);
 }
 
-function writeTokens(tokens) {
-  return fs.open('./data/tabletops.json', 'w')
+function writeTokens(store) {
+  const {cache, path} = store;
+  const tokens = cache.mget(cache.keys());
+  return fs.open(path, 'w')
            .then((filehandle) => {
              filehandle.writeFile(JSON.stringify(tokens));
              filehandle.close();
@@ -63,6 +75,9 @@ app.post('/api/tokens', handleTokensPost);
 
 app.delete('/api/tokens', handleTokensDelete);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+loadCache().then((stores) => {
+  global.stores = stores;
+  app.listen(port, () => {
+    console.log(`Unclean VTT listening on port ${port}`);
+  });
 });
