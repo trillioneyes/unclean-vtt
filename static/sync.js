@@ -1,16 +1,20 @@
 async function tokenPost(tokenData) {
-    return fetch('./api/tokens', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(tokenData)
-    });
+  const response = await fetch('./api/tokens', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(tokenData)
+  });
+  const json = await response.json();
+  for (const id of Object.keys(json)) {
+    tokenFromProperties(json[id]);
+  }
 }
 
 async function tokensGet() {
-    return fetch('./api/tokens')
-        .then((response) => response.json());
+  return fetch('./api/tokens')
+    .then((response) => response.json());
 }
 
 async function tokensDelete(ids) {
