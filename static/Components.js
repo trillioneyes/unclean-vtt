@@ -63,7 +63,10 @@ class UncleanToken extends HTMLDivElement {
           tokensDelete(this.id);
           this.parentElement.removeChild(this);
         });
-    this.addEventListener('changed', (ev) => this.setAttribute('data-dirty', true));
+    this.addEventListener(
+      'changed',
+      (ev) => this.setAttribute('data-dirty', true)
+    );
   }
 
   getName() {
@@ -186,17 +189,19 @@ class CofDDotsBlock extends HTMLElement {
   }
 
   fromProperties(properties) {
-    if (!properties[this.constructor.storageKey]) return;
+    const key = this.constructor.storageKey;
+    if (!properties[key]) return;
     for (const attr of this.constructor.order) {
       this.shadowRoot.querySelector(`[name="${attr}"]`)
-          .rating = properties[this.constructor.storageKey][attr];
+          .rating = properties[key][attr];
     }
   }
   toProperties(properties) {
-    if (!properties[this.constructor.storageKey])
-      properties[this.constructor.storageKey] = {};
+    const key = this.constructor.storageKey;
+    if (!properties[key])
+      properties[key] = {};
     for (const dots of this.shadowRoot.querySelectorAll('unclean-dots')) {
-      properties[this.constructor.storageKey][dots.getAttribute('name')] = dots.rating;
+      properties[key][dots.getAttribute('name')] = dots.rating;
     }
   }
 }
@@ -232,7 +237,8 @@ class CofDSkills extends CofDDotsBlock {
     super();
     const container = this.shadowRoot.querySelector('.cofd-skills');
     const skills = Array.from(container.children);
-    for (const [ixStart, category] of ["mental", "physical", "social"].entries()) {
+    for (const [ixStart, category]
+         of ["mental", "physical", "social"].entries()) {
       const div = document.createElement('div');
       div.classList.add('category', category);
       for (let offset = 0; offset < 8; offset++) {
@@ -331,7 +337,8 @@ class CofDSocial extends HTMLElement {
   }
 
   addOrRemoveDoors() {
-    const doorsWanted = this.shadowRoot.querySelector('#cofd-num-doors').value;
+    const doorsWanted =
+          this.shadowRoot.querySelector('#cofd-num-doors').value;
     let doorsSeen = 0;
     let door = this.shadowRoot.querySelector('.cofd-door');
     const doorsContainer = door.parentElement;
@@ -375,7 +382,8 @@ class CofDSocial extends HTMLElement {
     return open;
   }
   set openDoors(count) {
-    for (const [i, door] of this.shadowRoot.querySelectorAll('.cofd-door').entries()) {
+    for (const [i, door] of
+         this.shadowRoot.querySelectorAll('.cofd-door').entries()) {
       if (i < count) {
         door.checked = true;
       } else {

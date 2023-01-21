@@ -1,8 +1,16 @@
 function pickup(ev) {
-  ev.dataTransfer.setData('application/unclean.token', ev.target.id || '');
-  ev.dataTransfer.setData('application/unclean.modules', ev.target.getAttribute('data-modules'));
-  ev.dataTransfer.setData('application/unclean.drag.x', ev.offsetX);
-  ev.dataTransfer.setData('application/unclean.drag.y', ev.offsetY);
+  ev.dataTransfer.setData(
+    'application/unclean.token',
+    ev.target.id || '');
+  ev.dataTransfer.setData(
+    'application/unclean.modules',
+    ev.target.getAttribute('data-modules'));
+  ev.dataTransfer.setData(
+    'application/unclean.drag.x',
+    ev.offsetX);
+  ev.dataTransfer.setData(
+    'application/unclean.drag.y',
+    ev.offsetY);
 }
 function noPickup(ev) {
   ev.preventDefault();
@@ -35,13 +43,14 @@ function onDrop(ev) {
     x: ev.offsetX - ev.dataTransfer.getData('application/unclean.drag.x'),
     y: ev.offsetY - ev.dataTransfer.getData('application/unclean.drag.y')
   };
+  const modules = ev.dataTransfer.getData('application/unclean.modules');
   let element;
   if (!elementId) {
     element = makeNewToken(crypto.randomUUID());
   } else {
     element = document.getElementById(elementId);
   }
-  element.setAttribute('data-modules', ev.dataTransfer.getData('application/unclean.modules'));
+  element.setAttribute('data-modules', modules);
   positionToken(element, newPosition);
 }
 
@@ -51,7 +60,11 @@ function removePx(style) {
 }
 
 function tokenToProperties(element) {
-  let properties = {id: element.id, x: removePx(element.style.left), y: removePx(element.style.top)};
+  let properties = {
+    id: element.id,
+    x: removePx(element.style.left),
+    y: removePx(element.style.top)
+  };
   properties.name = element.shadowRoot.querySelector('input').value;
   for (const module of element.modules) {
     element.getModule(module).toProperties(properties);

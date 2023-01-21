@@ -1,106 +1,111 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <base target="_top">
-        <title>Unclean VTT</title>
-        <link rel="stylesheet" href="./Main.css">
-    </head>
+  <head>
+    <base target="_top">
+    <title>Unclean VTT</title>
+    <link rel="stylesheet" href="./Main.css">
+  </head>
 
-    <body>
-        <template id="character-sheet">
-            <dialog class="character-sheet">
-                <unclean-token-editor>
-                    <button class="open">Add/Remove Modules</button>
-                    <dialog>
-                        <form method="dialog">
-                            <textarea></textarea>
-                            <div>
-                                <button type="submit">OK</button>
-                                <button type="button" class="cancel">Cancel</button>
-                            </div>
-                        </form>
-                    </dialog>
-                </unclean-token-editor>
-            </dialog>
-        </template>
-        <template id="new-token">
-            <div class="token-container">
-                <link rel="stylesheet" href="Token.css">
-                <input class="nametag" draggable="true" is="unclean-nametag">
-                <button type="button" class="details-button">Sheet</button>
-                <button type="button" class="delete-button">X</button>
-            </div>
-        </template>
-        <template id="unclean-dots-svg">
-            <svg viewBox="0 -5 54 10" width=50 height=10>
-                <style>
-                 circle {
-                     fill-opacity: 0;
-                     fill: black;
-                     stroke: black;
-                     stroke-width: 1;
-                 }
-                 .filled {
-                     fill-opacity: 1;
-                 }
-                </style>
-                <g>
-                    <circle r="4.5" cx="5" />
-                    <circle r="4.5" cx="16"/>
-                    <circle r="4.5" cx="27"/>
-                    <circle r="4.5" cx="38"/>
-                    <circle r="4.5" cx="49"/>
-                </g>
-            </svg>
-        </template>
-        <template id="unclean-cofd-social">
-            <link rel="stylesheet" href="./CofDSocial.css">
-            <div class="doors-container">
-                <span class="cofd-doors">
-                    <input type="checkbox" class="cofd-door">
-                </span>
-                <input id="cofd-num-doors" type="number" value="1" min="1">
-            </div>
-        </template>
-        <template id="unclean-cofd-merits">
-            <template id="new-row">
-                <tr class="data-row">
-                    <td contenteditable="true">Name</td>
-                    <td><unclean-dots/></td>
-                    <td> <button>+</button> </td>
-                </tr>
-            </template>
-            <link rel="stylesheet" href="./Token.css">
-            <div class="merits-container">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th colspan="2"> Merits </th>
-                            <td><button>+</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </template>
+  <body>
+    <template id="character-sheet">
+      <dialog class="character-sheet">
+        <unclean-token-editor>
+          <button class="open">Add/Remove Modules</button>
+          <dialog>
+            <form method="dialog">
+              <textarea></textarea>
+              <div>
+                <button type="submit">OK</button>
+                <button type="button" class="cancel">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </dialog>
+        </unclean-token-editor>
+      </dialog>
+    </template>
+    <template id="new-token">
+      <div class="token-container">
+        <link rel="stylesheet" href="Token.css">
+        <input class="nametag" draggable="true" is="unclean-nametag">
+        <button type="button" class="details-button">Sheet</button>
+        <button type="button" class="delete-button">X</button>
+      </div>
+    </template>
+    <template id="unclean-dots-svg">
+      <svg viewBox="0 -5 54 10" width=50 height=10>
+        <style>
+         circle {
+             fill-opacity: 0;
+             fill: black;
+             stroke: black;
+             stroke-width: 1;
+         }
+         .filled {
+             fill-opacity: 1;
+         }
+        </style>
+        <g>
+          <circle r="4.5" cx="5" />
+          <circle r="4.5" cx="16"/>
+          <circle r="4.5" cx="27"/>
+          <circle r="4.5" cx="38"/>
+          <circle r="4.5" cx="49"/>
+        </g>
+      </svg>
+    </template>
+    <template id="unclean-cofd-social">
+      <link rel="stylesheet" href="./CofDSocial.css">
+      <div class="doors-container">
+        <span class="cofd-doors">
+          <input type="checkbox" class="cofd-door">
+        </span>
+        <input id="cofd-num-doors" type="number" value="1" min="1">
+      </div>
+    </template>
+    <template id="unclean-cofd-merits">
+      <template id="new-row">
+        <tr class="data-row">
+          <td contenteditable="true">Name</td>
+          <td><unclean-dots/></td>
+          <td> <button>+</button> </td>
+        </tr>
+      </template>
+      <link rel="stylesheet" href="./Token.css">
+      <div class="merits-container">
+        <table>
+          <tbody>
+            <tr>
+              <th colspan="2"> Merits </th>
+              <td><button>+</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </template>
 
-        <div style="width: 100%; height: 800px; display: flex; align-items: center; flex-direction: column;">
-            <div id="tabletop">
-                <div class="token-prototypes">
-                    <div draggable="true" class="prototype"
-                         data-modules="unclean-cofd-attributes,unclean-cofd-skills">
-                        <p>New Character</p>
-                    </div>
-                    <div draggable="true" class="prototype" data-modules="unclean-cofd-social">
-                        <p>New Social Maneuver</p>
-                    </div>
-                </div>
-            </div>
+    <div id="tabletop-container">
+      <div id="tabletop">
+        <div class="token-prototypes">
+          <div draggable="true"
+               class="prototype"
+               data-modules="unclean-cofd-attributes,unclean-cofd-skills">
+            <p>New Character</p>
+          </div>
+          <div draggable="true"
+               class="prototype"
+               data-modules="unclean-cofd-social">
+            <p>New Social Maneuver</p>
+          </div>
         </div>
-        <script src="./sync.js"></script>
-        <script src="./Handlers.js"></script>
-        <script src="./Components.js"></script>
-        <script src="./Main.js"></script>
-    </body>
+      </div>
+    </div>
+    <script src="./sync.js"></script>
+    <script src="./Handlers.js"></script>
+    <script src="./Components.js"></script>
+    <script src="./Main.js"></script>
+  </body>
 
 </html>

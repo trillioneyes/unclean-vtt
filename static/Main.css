@@ -26,6 +26,13 @@
     width: 1280px;
     height: 800px;
 }
+#tabletop-container {
+    width: 100%;
+    height: 800px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
 
 body {
     background-color: darkseagreen;
