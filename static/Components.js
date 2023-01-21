@@ -71,6 +71,10 @@ class UncleanToken extends HTMLDivElement {
       'unclean-revert',
       (ev) => this.revert()
     );
+    this.addEventListener(
+      'unclean-promote',
+      (ev) => this.promote()
+    );
   }
 
   getName() {
@@ -95,6 +99,10 @@ class UncleanToken extends HTMLDivElement {
         tokenFromProperties(props);
         this.setAttribute('data-dirty', true);
       });
+  }
+
+  promote() {
+    tokenPostPromote([tokenToProperties(this)]);
   }
 }
 
@@ -420,6 +428,13 @@ class TokenEditor extends HTMLElement {
         .addEventListener(
           'click',
           (ev) => this.dispatchEvent(new CustomEvent('unclean-revert', {
+            composed: true
+          }))
+        );
+    this.querySelector('button.save')
+        .addEventListener(
+          'click',
+          (ev) => this.dispatchEvent(new CustomEvent('unclean-promote', {
             composed: true
           }))
         );

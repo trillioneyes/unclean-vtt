@@ -38,6 +38,18 @@ async function handleTokensPost(req, resp) {
   writeTokens(global.stores.auto);
   resp.send(cache.mget(tokens.map((token) => token.id)));
 }
+async function handleTokensPostPromote(req, resp) {
+  const tokens = req.body;
+  const {cache: autoCache} = global.stores.auto;
+  const {cache: manualCache} = global.stores.manual;
+  for (const token of tokens) {
+    autoCache.set(token.id, token);
+    manualCache.set(token.id, token);
+  }
+  writeTokens(global.stores.auto);
+  writeTokens(global.stores.manual);
+  resp.send(autoCache.mget(tokens.map((token) => token.id)));
+}
 
 async function handleTokensDelete(req, resp) {
   const {cache} = global.stores.auto;
@@ -81,6 +93,8 @@ app.post('/api/tokens', handleTokensPost);
 app.delete('/api/tokens', handleTokensDelete);
 
 app.post('/api/tokens/revert', handleTokensRevert);
+
+app.post('/api/tokens/promote', handleTokensPostPromote);
 
 loadCache().then((stores) => {
   global.stores = stores;

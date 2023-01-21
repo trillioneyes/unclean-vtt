@@ -12,6 +12,20 @@ async function tokenPost(tokenData) {
   }
 }
 
+async function tokenPostPromote(tokenData) {
+  const response = await fetch('./api/tokens/promote', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(tokenData)
+  });
+  const json = await response.json();
+  for (const id of Object.keys(json)) {
+    tokenFromProperties(json[id]);
+  }
+}
+
 async function tokenGetCommitted(id) {
   const response = await fetch('./api/tokens/revert', {
     method: 'POST',
