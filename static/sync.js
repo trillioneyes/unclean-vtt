@@ -12,6 +12,18 @@ async function tokenPost(tokenData) {
   }
 }
 
+async function tokenGetCommitted(id) {
+  const response = await fetch('./api/tokens/revert', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({token: id})
+  });
+  const json = await response.json();
+  return json;
+}
+
 async function tokensGet() {
   return fetch('./api/tokens')
     .then((response) => response.json());

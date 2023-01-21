@@ -67,6 +67,10 @@ class UncleanToken extends HTMLDivElement {
       'changed',
       (ev) => this.setAttribute('data-dirty', true)
     );
+    this.addEventListener(
+      'unclean-revert',
+      (ev) => this.revert()
+    );
   }
 
   getName() {
@@ -83,6 +87,14 @@ class UncleanToken extends HTMLDivElement {
 
   get characterSheet() {
     return this.shadowRoot.querySelector('dialog');
+  }
+
+  revert() {
+    tokenGetCommitted(this.id)
+      .then((props) => {
+        tokenFromProperties(props);
+        this.setAttribute('data-dirty', true);
+      });
   }
 }
 
@@ -263,6 +275,9 @@ class CofDMerits extends HTMLElement {
 
   fromProperties(properties) {
     if (!properties.merits) return;
+    for (const row of this.shadowRoot.querySelectorAll('.data-row')) {
+      row.parentElement.removeChild(row);
+    }
     for (const [merit, rating] of properties.merits) {
       const newRow = this.cloneNewRow();
       const name = newRow.querySelector('[contenteditable=true]');
@@ -400,6 +415,13 @@ class TokenEditor extends HTMLElement {
         .addEventListener(
           'click',
           (ev) => this.open()
+        );
+    this.querySelector('button.revert')
+        .addEventListener(
+          'click',
+          (ev) => this.dispatchEvent(new CustomEvent('unclean-revert', {
+            composed: true
+          }))
         );
     this.querySelector('dialog button.cancel')
         .addEventListener(

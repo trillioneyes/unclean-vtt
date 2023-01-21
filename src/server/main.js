@@ -46,6 +46,11 @@ async function handleTokensDelete(req, resp) {
   resp.send();
 }
 
+async function handleTokensRevert(req, resp) {
+  const {cache} = global.stores.manual;
+  resp.send(cache.get(req.body.token));
+}
+
 function loadTokens() {
   return fs.open('./data/tabletops.json')
            .then((filehandle) => {
@@ -74,6 +79,8 @@ app.get('/api/tokens', handleTokensGet);
 app.post('/api/tokens', handleTokensPost);
 
 app.delete('/api/tokens', handleTokensDelete);
+
+app.post('/api/tokens/revert', handleTokensRevert);
 
 loadCache().then((stores) => {
   global.stores = stores;
