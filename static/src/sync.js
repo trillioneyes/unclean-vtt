@@ -43,6 +43,11 @@ async function tokensGet() {
     .then((response) => response.json());
 }
 
+async function getNewId() {
+  const response = await fetch('./api/new-id');
+  return (await response.json()).id;
+}
+
 async function tokensDelete(ids) {
   return fetch('./api/tokens', {
     method: 'DELETE',

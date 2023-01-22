@@ -83,10 +83,21 @@ function writeTokens(store) {
            });
 }
 
+function nextUnusedId() {
+  const id = String(global.nextId);
+  global.nextId++;
+  return id;
+}
+
+async function handleIdGet(req, resp) {
+  resp.send({id: nextUnusedId()});
+}
+
 app.use(express.static('static'));
 app.use(express.json());
 
 app.get('/api/tokens', handleTokensGet);
+app.get('/api/new-id', handleIdGet);
 
 app.post('/api/tokens', handleTokensPost);
 
@@ -98,6 +109,19 @@ app.post('/api/tokens/promote', handleTokensPostPromote);
 
 loadCache().then((stores) => {
   global.stores = stores;
+  const numericIds =
+        global
+        .stores.manual.cache.keys()
+        .filter((str) => str.match(/^[0-9]+$/g));
+  numericIds.push(0);
+  global.nextId =
+    Math.max(...numericIds) + 1;
+  console.log("Loaded data store with tokens:");
+  console.log({
+    manual: global.stores.manual.cache.keys(),
+    auto: global.stores.auto.cache.keys()
+  });
+  console.log("Next id: " + global.nextId);
   app.listen(port, () => {
     console.log(`Unclean VTT listening on port ${port}`);
   });

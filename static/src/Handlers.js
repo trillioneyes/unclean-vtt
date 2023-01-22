@@ -28,13 +28,14 @@ function positionToken(element, newPosition) {
   element.style.left = newPosition.x + 'px';
   element.style.top = newPosition.y + 'px';
 }
-function makeNewToken(newId) {
+function makeNewToken() {
   element = document.createElement('div', {is: 'unclean-token'});
-  element.id = newId;
   tabletop.appendChild(element);
   // positionToken(element, ev);
   // persistToken(element);
   element.shadowRoot.querySelector('input').focus();
+  element.setAttribute('data-dirty', true);
+  getNewId().then((id) => element.id = id);
   return element;
 }
 function onDrop(ev) {
@@ -46,7 +47,7 @@ function onDrop(ev) {
   const modules = ev.dataTransfer.getData('application/unclean.modules');
   let element;
   if (!elementId) {
-    element = makeNewToken(crypto.randomUUID());
+    element = makeNewToken();
   } else {
     element = document.getElementById(elementId);
   }
