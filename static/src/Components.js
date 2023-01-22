@@ -30,24 +30,24 @@ class UncleanToken extends HTMLDivElement {
   }
 
   attributeChangedCallback(name, oldValue, value) {
-    const sheet = this.characterSheet.querySelectorAll('.unclean-module');
+    const sheet = this.detailSheet.querySelectorAll('.unclean-module');
     for (const element of sheet) {
       if (!this.modules.includes(element.tagName.toLowerCase())) {
-        this.characterSheet.removeChild(element);
+        this.detailSheet.removeChild(element);
       }
     }
     for (const module of this.modules) {
-      if (!this.characterSheet.querySelector(module)) {
+      if (!this.detailSheet.querySelector(module)) {
         const element = document.createElement(module);
         element.className = 'unclean-module';
-        this.characterSheet.appendChild(element);
+        this.detailSheet.appendChild(element);
       }
     }
     this.setAttribute('data-dirty', true);
   }
 
   getModule(moduleName) {
-    return this.characterSheet.querySelector(moduleName);
+    return this.detailSheet.querySelector(moduleName);
   }
 
   connectedCallback() {
@@ -56,7 +56,7 @@ class UncleanToken extends HTMLDivElement {
     this.addEventListener('dragover', noDragEnter);
     this.shadowRoot.querySelector('.details-button')
         .addEventListener('click', (ev) => {
-          this.characterSheet.showModal();
+          this.detailSheet.showModal();
         });
     this.shadowRoot.querySelector('.delete-button')
         .addEventListener('click', (ev) => {
@@ -89,7 +89,7 @@ class UncleanToken extends HTMLDivElement {
     this.shadowRoot.querySelector('input').focus();
   }
 
-  get characterSheet() {
+  get detailSheet() {
     return this.shadowRoot.querySelector('dialog');
   }
 
