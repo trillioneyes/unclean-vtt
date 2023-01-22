@@ -20,11 +20,11 @@ input[type=number] {
 }
 
 .cofd-door::before {
-    content: url("./closed-doors.svg");
+    content: url("/img/closed-doors.svg");
     /* right: -1px; */
     /* top: -0.3em; */
 }
 
 .cofd-door:checked::before {
-    content: url("./open-gate.svg")
+    content: url("/img/open-gate.svg")
 }

@@ -191,7 +191,7 @@ class CofDDotsBlock extends HTMLElement {
     this.attachShadow({mode: 'open'});
     const style = document.createElement('link');
     style.rel = 'stylesheet';
-    style.href = 'Token.css';
+    style.href = './styles/Token.css';
     this.shadowRoot.appendChild(style);
     const div = document.createElement('div');
     div.className = this.constructor.containerClassName;
