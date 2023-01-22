@@ -1,9 +1,15 @@
 const express = require('express');
 const fs = require('fs/promises');
+const {readFileSync} = require('fs');
 const NodeCache = require('node-cache');
+const https = require('https');
 
 const app = express();
 const port = 3000;
+const creds = {
+  key: readFileSync('./data/cert/selfsigned.key'),
+  cert: readFileSync('./data/cert/selfsigned.crt')
+};
 
 async function loadCache() {
   const stores = {
@@ -107,6 +113,16 @@ app.post('/api/tokens/revert', handleTokensRevert);
 
 app.post('/api/tokens/promote', handleTokensPostPromote);
 
+// const redirectApp = express();
+// redirectApp.all('*', function(req, res) {
+//   console.log("Redirecting");
+//   if (req.isSocket) {
+//     return res.redirect('wss://' + req.headers.host + req.url);
+//   } else {
+//     return res.redirect('https://' + req.headers.host + req.url);
+//   }
+// });
+
 loadCache().then((stores) => {
   global.stores = stores;
   const numericIds =
@@ -122,7 +138,6 @@ loadCache().then((stores) => {
     auto: global.stores.auto.cache.keys()
   });
   console.log("Next id: " + global.nextId);
-  app.listen(port, () => {
-    console.log(`Unclean VTT listening on port ${port}`);
-  });
+  const httpsServer = https.createServer(creds, app);
+  httpsServer.listen(port);
 });
