@@ -3,6 +3,8 @@ const fs = require('fs/promises');
 const {readFileSync} = require('fs');
 const NodeCache = require('node-cache');
 const https = require('https');
+const {v4: uuid} = require('uuid');
+const ws = require('ws');
 
 const app = express();
 const port = 3000;
@@ -29,6 +31,18 @@ async function loadCache() {
   return stores;
 }
 
+async function notifySockets(initiator, updates, deletes) {
+  for (const client of Object.keys(global.webSockets)) {
+    if (client !== initiator) {
+      global.webSockets[client]
+            .send(JSON.stringify({
+              yourId: client,
+              body: {updates, deletes}
+            }));
+    }
+  }
+}
+
 async function handleTokensGet(req, resp) {
   const cacheDump = global.stores.auto.cache.mget(
     global.stores.auto.cache.keys()
@@ -36,16 +50,17 @@ async function handleTokensGet(req, resp) {
   resp.send(Object.values(cacheDump));
 }
 async function handleTokensPost(req, resp) {
-  const tokens = req.body;
+  const {clientId, tokens} = req.body;
   const {cache} = global.stores.auto;
   for (const token of tokens) {
     cache.set(token.id, token);
   }
   writeTokens(global.stores.auto);
   resp.send(cache.mget(tokens.map((token) => token.id)));
+  notifySockets(clientId, tokens);
 }
 async function handleTokensPostPromote(req, resp) {
-  const tokens = req.body;
+  const {clientId, tokens} = req.body;
   const {cache: autoCache} = global.stores.auto;
   const {cache: manualCache} = global.stores.manual;
   for (const token of tokens) {
@@ -55,13 +70,16 @@ async function handleTokensPostPromote(req, resp) {
   writeTokens(global.stores.auto);
   writeTokens(global.stores.manual);
   resp.send(autoCache.mget(tokens.map((token) => token.id)));
+  notifySockets(clientId, tokens);
 }
 
 async function handleTokensDelete(req, resp) {
   const {cache} = global.stores.auto;
-  cache.del(req.body.ids);
+  const {clientId, ids} = req.body;
+  cache.del(ids);
   writeTokens(global.stores.auto);
   resp.send();
+  notifySockets(clientId, [], ids);
 }
 
 async function handleTokensRevert(req, resp) {
@@ -113,6 +131,18 @@ app.post('/api/tokens/revert', handleTokensRevert);
 
 app.post('/api/tokens/promote', handleTokensPostPromote);
 
+function handleSocket (ws) {
+  if (!global.webSockets) global.webSockets = {};
+  const newClientId = uuid();
+  global.webSockets[newClientId] = ws;
+  ws.send(JSON.stringify({yourId: newClientId}));
+}
+
+function createWsServer(httpServer) {
+  const wss = new ws.WebSocketServer({server: httpServer});
+  wss.on('connection', handleSocket);
+}
+
 // const redirectApp = express();
 // redirectApp.all('*', function(req, res) {
 //   console.log("Redirecting");
@@ -139,5 +169,6 @@ loadCache().then((stores) => {
   });
   console.log("Next id: " + global.nextId);
   const httpsServer = https.createServer(creds, app);
+  createWsServer(httpsServer);
   httpsServer.listen(port);
 });

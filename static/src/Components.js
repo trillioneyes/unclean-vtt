@@ -60,7 +60,7 @@ class UncleanToken extends HTMLDivElement {
         });
     this.shadowRoot.querySelector('.delete-button')
         .addEventListener('click', (ev) => {
-          tokensDelete(this.id);
+          tokensDelete([this.id]);
           this.parentElement.removeChild(this);
         });
     this.addEventListener(
