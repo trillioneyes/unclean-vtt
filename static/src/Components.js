@@ -19,6 +19,30 @@ class UncleanToken extends HTMLDivElement {
     });
     attachShadowTemplate(this, 'new-token');
     attachShadowTemplate(this, 'character-sheet');
+    this.addEventListener('dragstart', pickup);
+    this.addEventListener('dragenter', noDragEnter);
+    this.addEventListener('dragover', noDragEnter);
+    this.shadowRoot.querySelector('.details-button')
+        .addEventListener('click', (ev) => {
+          this.detailSheet.showModal();
+        });
+    this.shadowRoot.querySelector('.delete-button')
+        .addEventListener('click', (ev) => {
+          tokensDelete([this.id]);
+          this.parentElement.removeChild(this);
+        });
+    this.addEventListener(
+      'changed',
+      (ev) => this.setAttribute('data-dirty', true)
+    );
+    this.addEventListener(
+      'unclean-revert',
+      (ev) => this.revert()
+    );
+    this.addEventListener(
+      'unclean-promote',
+      (ev) => this.promote()
+    );
   }
 
   get modules() {
@@ -51,30 +75,6 @@ class UncleanToken extends HTMLDivElement {
   }
 
   connectedCallback() {
-    this.addEventListener('dragstart', pickup);
-    this.addEventListener('dragenter', noDragEnter);
-    this.addEventListener('dragover', noDragEnter);
-    this.shadowRoot.querySelector('.details-button')
-        .addEventListener('click', (ev) => {
-          this.detailSheet.showModal();
-        });
-    this.shadowRoot.querySelector('.delete-button')
-        .addEventListener('click', (ev) => {
-          tokensDelete([this.id]);
-          this.parentElement.removeChild(this);
-        });
-    this.addEventListener(
-      'changed',
-      (ev) => this.setAttribute('data-dirty', true)
-    );
-    this.addEventListener(
-      'unclean-revert',
-      (ev) => this.revert()
-    );
-    this.addEventListener(
-      'unclean-promote',
-      (ev) => this.promote()
-    );
   }
 
   getName() {
