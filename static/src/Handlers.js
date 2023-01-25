@@ -71,7 +71,8 @@ function tokenToProperties(element) {
   let properties = {
     id: element.id,
     x: removePx(element.style.left),
-    y: removePx(element.style.top)
+    y: removePx(element.style.top),
+    zone: element.parentElement.id? element.parentElement.id : 'tabletop'
   };
   properties.name = element.shadowRoot.querySelector('input').value;
   for (const module of element.modules) {
@@ -87,7 +88,8 @@ function tokenFromProperties(properties) {
   if (!element) {
     element = document.createElement('div', {is: 'unclean-token'});
     element.id = properties.id;
-    tabletop.appendChild(element);
+    const parent = document.getElementById(properties.zone || 'tabletop');
+    parent.appendChild(element);
   }
   element.modules = modules;
   positionToken(element, properties);
