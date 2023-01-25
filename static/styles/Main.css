@@ -9,6 +9,11 @@
     border-style: ridge;
     padding: 3px;
 }
+
+.drawer [is=unclean-token] {
+    position: static;
+}
+
 .token-prototypes {
     top: 100%;
     left: 0px;
@@ -22,12 +27,14 @@
 }
 #tabletop {
     position: static;
+    transform: translate(0, 0);
     background-color: green;
     width: 1280px;
     height: 800px;
 }
 #tabletop-container {
     width: 100%;
+    /* height: 800px; */
     display: flex;
     align-items: center;
     flex-direction: column;

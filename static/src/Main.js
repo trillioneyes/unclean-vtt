@@ -3,11 +3,13 @@ document.querySelectorAll('.prototype')
         element.addEventListener('dragstart', pickup);
     });
 
-const tabletop = document.getElementById('tabletop');
-tabletop.addEventListener('dragenter', onDragEnter);
-tabletop.addEventListener('dragover', onDragEnter);
+for (const dropzone of
+     document.querySelectorAll('#tabletop, .drawer')) {
+  dropzone.addEventListener('dragenter', onDragEnter);
+  dropzone.addEventListener('dragover', onDragEnter);
+  dropzone.addEventListener('drop', onDrop, {capture: true});
+}
 
-tabletop.addEventListener('drop', onDrop, {capture: true});
 loadTokens();
 
 let syncInterval = setInterval(syncDirtyTokens, 1);

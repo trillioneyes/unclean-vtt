@@ -18,6 +18,12 @@ function noPickup(ev) {
 
 function onDragEnter(ev) {
   if (ev.dataTransfer.types.includes('application/unclean.token')) {
+    ev.dataTransfer.dropEffect = 'move';
+    ev.preventDefault();
+  }
+}
+function onDragEnterDrawer(ev) {
+  if (ev.dataTransfer.types.includes('application/unclean.token')) {
     ev.preventDefault();
   }
 }
@@ -51,6 +57,7 @@ function onDrop(ev) {
   } else {
     element = document.getElementById(elementId);
   }
+  this.appendChild(element);
   element.setAttribute('data-modules', modules);
   positionToken(element, newPosition);
 }
