@@ -21,17 +21,29 @@
     position: static;
 }
 #tabletop {
-    position: fixed;
+    position: static;
     background-color: green;
     width: 1280px;
     height: 800px;
 }
 #tabletop-container {
     width: 100%;
-    height: 800px;
     display: flex;
     align-items: center;
     flex-direction: column;
+}
+
+.drawer {
+    width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    border-style: inset;
+    margin: 5px;
+    padding: 30px;
+    background-color: burlywood;
+    background: url("/img/opengameart-wood2.jpg");
+    border-color: brown;
+    border-width: 0.5em;
 }
 
 body {
