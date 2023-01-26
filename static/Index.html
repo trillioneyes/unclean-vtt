@@ -71,15 +71,15 @@
     <template id="unclean-cofd-merits">
       <template id="new-row">
         <tr class="data-row">
-          <td contenteditable="true">Name</td>
-          <td><unclean-dots/></td>
+          <td><input type="text" class="data-column data-row-name"/></td>
+          <td><unclean-dots class="data-column" /></td>
           <td> <button>+</button> </td>
         </tr>
       </template>
       <link rel="stylesheet" href="./styles/Token.css">
       <div class="merits-container">
         <table>
-          <tbody>
+          <tbody class="data-container">
             <tr>
               <th colspan="2"> Merits </th>
               <td><button>+</button></td>

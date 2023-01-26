@@ -1,6 +1,6 @@
 async function tokenPost(tokenData) {
   if (!window.uncleanClientId) {
-    setImmediate(() => tokenPost(tokenData));
+    setTimeout(() => tokenPost(tokenData), 1);
     return;
   }
   const body = {

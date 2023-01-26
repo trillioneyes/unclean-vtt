@@ -1,6 +1,15 @@
 .nametag {
-    width: 90%;
+    width: 100%;
+    font-family: inherit;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
 }
+.nametag:not(:focus) {
+}
+.nametag:focus {
+    background: rgba(255, 255, 255, 0.5);
+}
+
 .token-container {
     display: flex;
     flex-direction: column;
@@ -63,4 +72,8 @@
 
 .merits-container {
     font-size: smaller;
+}
+
+.merits-container input.data-row-name {
+    border: none;
 }

@@ -32,7 +32,7 @@ class UncleanToken extends HTMLDivElement {
           this.parentElement.removeChild(this);
         });
     this.addEventListener(
-      'changed',
+      'change',
       (ev) => this.setAttribute('data-dirty', true)
     );
     this.addEventListener(
@@ -145,7 +145,7 @@ class UncleanDots extends HTMLElement {
         circle = circle.previousElementSibling;
       }
     }
-    const event = new CustomEvent('changed', {
+    const event = new CustomEvent('change', {
       bubbles: true,
       composed: true
     });
@@ -182,6 +182,13 @@ class UncleanDots extends HTMLElement {
       }
     }
     return value;
+  }
+
+  get value() {
+    return this.rating;
+  }
+  set value(x) {
+    this.rating = x;
   }
 }
 
@@ -288,22 +295,21 @@ class CofDMerits extends HTMLElement {
     }
     for (const [merit, rating] of properties.merits) {
       const newRow = this.cloneNewRow();
-      const name = newRow.querySelector('[contenteditable=true]');
-      const dots = newRow.querySelector('unclean-dots');
-      this.shadowRoot.querySelector('tbody')
+      const name = newRow.querySelector('.data-row-name');
+      const dots = newRow.querySelector('.data-column:not(.data-row-name)');
+      this.shadowRoot.querySelector('.data-container')
           .appendChild(newRow);
-      name.textContent = merit;
+      name.value = merit;
       dots.rating = rating;
     }
   }
   toProperties(properties) {
     const merits = [];
     for (const td of
-         this.shadowRoot.querySelectorAll('[contenteditable=true]')) {
-      const merit = td.textContent;
-      const rating = td.nextElementSibling.querySelector('unclean-dots')
-                       .rating;
-      merits.push([merit, rating]);
+         this.shadowRoot.querySelectorAll('.data-row')) {
+      const columns = Array.from(td.querySelectorAll('.data-column'));
+      const data = columns.map(col => col.value);
+      merits.push(data);
     }
     properties.merits = merits;
   }
@@ -322,13 +328,18 @@ class CofDMerits extends HTMLElement {
     fragment.querySelector('button').addEventListener('click', (ev) => {
       this.addNew(ev);
     });
-    fragment.querySelector('[contenteditable=true]')
-            .addEventListener('focusout', (ev) => {
-              if (ev.currentTarget.textContent == '') {
-                ev.currentTarget.parentElement.parentElement
-                  .removeChild(ev.currentTarget.parentElement);
+    fragment.querySelector('.data-row-name')
+            .addEventListener('change', (ev) => {
+              if (ev.currentTarget.value == '') {
+                let child = ev.currentTarget,
+                    ancestor = child.parentElement;
+                while (!ancestor.classList.contains('data-row')) {
+                  child = ancestor;
+                  ancestor = ancestor.parentElement;
+                }
+                ancestor.parentElement.removeChild(ancestor);
               }
-              this.dispatchEvent(new CustomEvent('changed', {
+              this.dispatchEvent(new CustomEvent('change', {
                 composed: true,
                 bubbles: true
               }));
@@ -382,7 +393,7 @@ class CofDSocial extends HTMLElement {
   }
 
   bubbleChanged(event) {
-    const newEvent = new CustomEvent('changed', {
+    const newEvent = new CustomEvent('change', {
       bubbles: true,
       composed: true
     });

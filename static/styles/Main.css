@@ -44,6 +44,7 @@
     width: 800px;
     display: flex;
     flex-wrap: wrap;
+    gap: 2px;
     border-style: inset;
     margin: 5px;
     padding: 30px;
