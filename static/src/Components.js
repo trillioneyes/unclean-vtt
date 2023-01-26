@@ -288,30 +288,36 @@ class CofDMerits extends HTMLElement {
         });
   }
 
-  fromProperties(properties) {
-    if (!properties.merits) return;
-    for (const row of this.shadowRoot.querySelectorAll('.data-row')) {
-      row.parentElement.removeChild(row);
-    }
-    for (const [merit, rating] of properties.merits) {
-      const newRow = this.cloneNewRow();
-      const name = newRow.querySelector('.data-row-name');
-      const dots = newRow.querySelector('.data-column:not(.data-row-name)');
-      this.shadowRoot.querySelector('.data-container')
-          .appendChild(newRow);
-      name.value = merit;
-      dots.rating = rating;
+  get entries() {
+    return Array.from(
+      this.shadowRoot.querySelectorAll('.data-row')
+    ).map(column =>
+      Array.from(
+        column.querySelectorAll('.data-column')
+      ).map(col => col.value)
+    );
+  }
+
+  set entries(entries) {
+    Array.from(this.shadowRoot.querySelectorAll('.data-row'))
+         .forEach(row => row.remove());
+    const container = this.shadowRoot.querySelector('.data-container');
+    for (const row of entries) {
+      const rowEl = this.cloneNewRow();
+      const fieldEls = rowEl.querySelectorAll('.data-column');
+      container.appendChild(rowEl);
+      for (let i = 0; i < row.length; i++) {
+        fieldEls[i].value = row[i];
+      }
     }
   }
+
+  fromProperties(properties) {
+    if (!properties.merits) return;
+    this.entries = properties.merits;
+  }
   toProperties(properties) {
-    const merits = [];
-    for (const td of
-         this.shadowRoot.querySelectorAll('.data-row')) {
-      const columns = Array.from(td.querySelectorAll('.data-column'));
-      const data = columns.map(col => col.value);
-      merits.push(data);
-    }
-    properties.merits = merits;
+    properties.merits = this.entries;
   }
 
   addNew(event) {
