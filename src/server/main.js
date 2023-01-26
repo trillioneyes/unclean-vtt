@@ -153,15 +153,19 @@ function createWsServer(httpServer) {
 //   }
 // });
 
-loadCache().then((stores) => {
-  global.stores = stores;
+function findLatestId() {
   const numericIds =
         global
         .stores.manual.cache.keys()
+        .concat(global.stores.auto.cache.keys())
         .filter((str) => str.match(/^[0-9]+$/g));
   numericIds.push(0);
-  global.nextId =
-    Math.max(...numericIds) + 1;
+  return Math.max(...numericIds) + 1;
+}
+
+loadCache().then((stores) => {
+  global.stores = stores;
+  global.nextId = findLatestId();
   console.log("Loaded data store with tokens:");
   console.log({
     manual: global.stores.manual.cache.keys(),
