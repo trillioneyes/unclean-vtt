@@ -67,6 +67,14 @@ class UncleanToken extends HTMLDivElement {
         this.detailSheet.appendChild(element);
       }
     }
+    for (let i = 0; i + 1 < this.modules.length; i++) {
+      const moduleHere = this.getModule(this.modules[i]);
+      const moduleNext = this.getModule(this.modules[i+1]);
+      if (moduleHere &&
+          moduleNext &&
+          moduleHere.nextElementSibling !== moduleNext)
+      moduleHere.after(moduleNext);
+    }
     this.setAttribute('data-dirty', true);
   }
 
