@@ -18,9 +18,13 @@
           <dialog>
             <form method="dialog">
               <editable-list>
+                <datalist is="unclean-modules-datalist"
+                          id="unclean-modules-datalist">
+                </datalist>
                 <template id="new-row">
                   <li class="data-row">
-                    <input class="data-column data-row-name"/>
+                    <input class="data-column data-row-name"
+                           list="unclean-modules-datalist"/>
                     <button>+</button>
                   </li>
                 </template>

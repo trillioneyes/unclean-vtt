@@ -522,6 +522,16 @@ class TokenEditor extends HTMLElement {
   }
 }
 
+class ModulesDatalist extends HTMLDataListElement {
+  constructor() {
+    super();
+    for (const tag of Object.keys(window.uncleanModules)) {
+      this.appendChild(document.createElement('option'))
+          .innerText = tag;
+    }
+  }
+}
+
 function defineModule(tag, moduleClass) {
   if (!window.uncleanModules) window.uncleanModules = {};
   if (!moduleClass.prototype.toProperties
@@ -535,6 +545,8 @@ customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
 customElements.define('unclean-token-editor', TokenEditor);
 customElements.define('editable-list', EditableList);
+customElements.define(
+  'unclean-modules-datalist', ModulesDatalist, {extends: 'datalist'});
 defineModule('unclean-cofd-attributes', CofDAttributes);
 defineModule('unclean-cofd-social', CofDSocial);
 defineModule('unclean-cofd-skills', CofDSkills);
