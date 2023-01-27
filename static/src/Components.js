@@ -302,7 +302,7 @@ class EditableList extends HTMLElement {
     rowName.focus();
     rowName.addEventListener('focusout', ev => {
       this.constructor.removeIfEmpty(ev.currentTarget);
-    });
+    }, {once: true});
   }
 
   get entries() {
