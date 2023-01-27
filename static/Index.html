@@ -17,7 +17,35 @@
           <button class="save">Save Changes</button>
           <dialog>
             <form method="dialog">
-              <textarea></textarea>
+              <editable-list>
+                <template id="new-row">
+                  <li class="data-row">
+                    <input class="data-column data-row-name"/>
+                    <button>+</button>
+                  </li>
+                </template>
+                <style>
+                 span, input.data-row-name {
+                     width: 177px;
+                     font: 0.8rem sans-serif;
+                     box-sizing: border-box;
+                     display: inline-block;
+                 }
+                 span {
+                     font-weight: bold;
+                     margin-right: 4px;
+                 }
+                 ol {
+                     list-style: none;
+                     padding: 0;
+                 }
+                </style>
+                <ol class="data-container">
+                  <li>
+                    <span>Modules</span><button>+</button>
+                  </li>
+                </ol>
+              </editable-list>
               <div>
                 <button type="submit">OK</button>
                 <button type="button" class="cancel">

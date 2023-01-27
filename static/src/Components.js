@@ -15,7 +15,7 @@ class UncleanToken extends HTMLDivElement {
     this.draggable = true;
     this.setAttribute('is', 'unclean-token');
     this.addEventListener('unclean-set-modules', (ev) => {
-      this.setAttribute('data-modules', ev.detail);
+      this.setAttribute('data-modules', ev.detail.join(','));
     });
     attachShadowTemplate(this, 'new-token');
     attachShadowTemplate(this, 'character-sheet');
@@ -278,14 +278,31 @@ class CofDSkills extends CofDDotsBlock {
   }
 }
 
-class CofDMerits extends HTMLElement {
+class EditableList extends HTMLElement {
   constructor() {
     super();
-    attachShadowTemplate(this, 'unclean-cofd-merits');
+    if (this.constructor.templateId) {
+      attachShadowTemplate(this, this.constructor.templateId);
+    } else {
+      const children = Array.from(this.children);
+      this.attachShadow({mode: 'open'});
+      for (const child of children) {
+        this.shadowRoot.appendChild(child);
+      }
+    }
     this.shadowRoot.querySelector('button')
-        .addEventListener('click', (ev) => {
-          this.addNew(ev);
+        .addEventListener('click', ev => {
+          this.buttonCallback(ev);
         });
+  }
+
+  buttonCallback(ev) {
+    const newRow = this.addNew(ev);
+    const rowName = newRow.querySelector('.data-row-name');
+    rowName.focus();
+    rowName.addEventListener('focusout', ev => {
+      this.constructor.removeIfEmpty(ev.currentTarget);
+    });
   }
 
   get entries() {
@@ -300,7 +317,9 @@ class CofDMerits extends HTMLElement {
 
   set entries(entries) {
     Array.from(this.shadowRoot.querySelectorAll('.data-row'))
-         .forEach(row => row.remove());
+         .forEach(row => {
+           if (row.parentElement) row.remove();
+         });
     const container = this.shadowRoot.querySelector('.data-container');
     for (const row of entries) {
       const rowEl = this.cloneNewRow();
@@ -312,45 +331,66 @@ class CofDMerits extends HTMLElement {
     }
   }
 
-  fromProperties(properties) {
-    if (!properties.merits) return;
-    this.entries = properties.merits;
-  }
-  toProperties(properties) {
-    properties.merits = this.entries;
-  }
+  get value() { return this.entries; }
+  set value(entries) { this.entries = entries; }
 
   addNew(event) {
     const button = event.currentTarget;
-    const row = button.parentElement.parentElement;
+    let row = button;
+    while (row && !row.classList.contains('data-row')) {
+      row = row.parentElement;
+    }
     const newRow = this.cloneNewRow();
-    row.after(newRow);
-    return newRow;
+    const dataRowElement = newRow.querySelector('.data-row');
+    if (row) {
+      row.after(newRow);
+    } else {
+      const container = this.shadowRoot.querySelector('.data-container');
+      const firstDataRow = container.querySelector('.data-row');
+      container.insertBefore(newRow, firstDataRow);
+    }
+    return dataRowElement;
   }
 
   cloneNewRow() {
     const fragment =
           this.shadowRoot.getElementById('new-row').content.cloneNode(true);
     fragment.querySelector('button').addEventListener('click', (ev) => {
-      this.addNew(ev);
+      this.buttonCallback(ev);
     });
     fragment.querySelector('.data-row-name')
             .addEventListener('change', (ev) => {
-              if (ev.currentTarget.value == '') {
-                let child = ev.currentTarget,
-                    ancestor = child.parentElement;
-                while (!ancestor.classList.contains('data-row')) {
-                  child = ancestor;
-                  ancestor = ancestor.parentElement;
-                }
-                ancestor.parentElement.removeChild(ancestor);
-              }
+              this.constructor.removeIfEmpty(ev.currentTarget);
               this.dispatchEvent(new CustomEvent('change', {
                 composed: true,
                 bubbles: true
               }));
             });
     return fragment;
+  }
+
+  static removeIfEmpty(row) {
+    if (row.value == '') {
+      let child = row,
+          ancestor = child.parentElement;
+      while (!ancestor.classList.contains('data-row')) {
+        child = ancestor;
+        ancestor = ancestor.parentElement;
+      }
+      ancestor.parentElement.removeChild(ancestor);
+    }
+  }
+}
+
+class CofDMerits extends EditableList {
+  static templateId = 'unclean-cofd-merits';
+
+  fromProperties(properties) {
+    if (!properties.merits) return;
+    this.entries = properties.merits;
+  }
+  toProperties(properties) {
+    properties.merits = this.entries;
   }
 }
 
@@ -463,21 +503,22 @@ class TokenEditor extends HTMLElement {
     this.addEventListener('submit', (ev) => {
       this.dispatchEvent(new CustomEvent('unclean-set-modules', {
         composed: true,
-        detail: this.querySelector('textarea').value
+        detail: this.querySelector('editable-list').value
+                    .map(row => row[0])
       }));
     });
   }
 
   open() {
-    this.querySelector('textarea')
-        .value = this.modules.join(',');
     this.querySelector('dialog').showModal();
+    this.querySelector('editable-list')
+        .value = this.modules;
   }
 
   get modules() {
     const elements = this.parentElement.querySelectorAll('.unclean-module');
     return Array.from(elements)
-                .map((element) => element.tagName.toLowerCase());
+                .map((element) => [element.tagName.toLowerCase()]);
   }
 }
 
@@ -493,6 +534,7 @@ customElements.define('unclean-token', UncleanToken, {extends: 'div'});
 customElements.define('unclean-nametag', UncleanNametag, {extends: 'input'});
 customElements.define('unclean-dots', UncleanDots);
 customElements.define('unclean-token-editor', TokenEditor);
+customElements.define('editable-list', EditableList);
 defineModule('unclean-cofd-attributes', CofDAttributes);
 defineModule('unclean-cofd-social', CofDSocial);
 defineModule('unclean-cofd-skills', CofDSkills);
