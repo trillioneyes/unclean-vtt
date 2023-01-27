@@ -57,7 +57,7 @@ async function handleTokensPost(req, resp) {
   }
   writeTokens(global.stores.auto);
   resp.send(cache.mget(tokens.map((token) => token.id)));
-  notifySockets(clientId, tokens);
+  notifySockets(clientId, tokens, []);
 }
 async function handleTokensPostPromote(req, resp) {
   const {clientId, tokens} = req.body;
@@ -70,7 +70,7 @@ async function handleTokensPostPromote(req, resp) {
   writeTokens(global.stores.auto);
   writeTokens(global.stores.manual);
   resp.send(autoCache.mget(tokens.map((token) => token.id)));
-  notifySockets(clientId, tokens);
+  notifySockets(clientId, tokens, []);
 }
 
 async function handleTokensDelete(req, resp) {
