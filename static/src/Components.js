@@ -287,6 +287,17 @@ class CofDSkills extends CofDDotsBlock {
 }
 
 class EditableList extends HTMLElement {
+  static getListParent(element, targetClass) {
+    const listClasses = targetClass? [targetClass] :
+          ['data-column', 'data-row', 'data-container'];
+    let parent = element.parentElement;
+    while (parent &&
+           !listClasses.some(c => parent.classList.contains(c))) {
+      parent = parent.parentElement;
+    }
+    return parent;
+  }
+
   constructor() {
     super();
     if (this.constructor.templateId) {
@@ -303,6 +314,10 @@ class EditableList extends HTMLElement {
           this.buttonCallback(ev);
         });
   }
+
+  get container() {
+    return this.shadowRoot.querySelector('.data-container');
+  };
 
   buttonCallback(ev) {
     const newRow = this.addNew(ev);
@@ -328,11 +343,10 @@ class EditableList extends HTMLElement {
          .forEach(row => {
            if (row.parentElement) row.remove();
          });
-    const container = this.shadowRoot.querySelector('.data-container');
     for (const row of entries) {
       const rowEl = this.cloneNewRow();
       const fieldEls = rowEl.querySelectorAll('.data-column');
-      container.appendChild(rowEl);
+      this.container.appendChild(rowEl);
       for (let i = 0; i < row.length; i++) {
         fieldEls[i].value = row[i];
       }
@@ -344,18 +358,14 @@ class EditableList extends HTMLElement {
 
   addNew(event) {
     const button = event.currentTarget;
-    let row = button;
-    while (row && !row.classList.contains('data-row')) {
-      row = row.parentElement;
-    }
+    const row = this.constructor.getListParent(button);
     const newRow = this.cloneNewRow();
     const dataRowElement = newRow.querySelector('.data-row');
     if (row) {
       row.after(newRow);
     } else {
-      const container = this.shadowRoot.querySelector('.data-container');
-      const firstDataRow = container.querySelector('.data-row');
-      container.insertBefore(newRow, firstDataRow);
+      const firstDataRow = this.container.querySelector('.data-row');
+      this.container.insertBefore(newRow, firstDataRow);
     }
     return dataRowElement;
   }
@@ -377,15 +387,11 @@ class EditableList extends HTMLElement {
     return fragment;
   }
 
-  static removeIfEmpty(row) {
-    if (row.value == '') {
-      let child = row,
-          ancestor = child.parentElement;
-      while (!ancestor.classList.contains('data-row')) {
-        child = ancestor;
-        ancestor = ancestor.parentElement;
-      }
-      ancestor.parentElement.removeChild(ancestor);
+  static removeIfEmpty(cell) {
+    if (cell.value == '') {
+      this.container.removeChild(
+        this.constructor.getListParent(cell, 'data-row')
+      );
     }
   }
 }
